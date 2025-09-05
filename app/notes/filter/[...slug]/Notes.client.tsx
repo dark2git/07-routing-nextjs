@@ -11,14 +11,12 @@ import Pagination from "@/components/Pagination/Pagination";
 import SearchBox from "@/components/SearchBox/SearchBox";
 
 interface NotesClientProps {
-  initData: FetchHttpResponse | undefined;
   initialSearch: string;
   initialPage: number;
   tag: string | undefined;
 }
 
 export default function NotesClient({
-  initData,
   initialSearch,
   initialPage,
   tag,
@@ -28,11 +26,15 @@ export default function NotesClient({
   const [currentPage, setCurrentPage] = useState(initialPage);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  function handleSearchChange(value: string) {
+    setInputValue(value);
+    setCurrentPage(1); // скиданян сторінки при новому пошуку
+  }
+
   const { data } = useQuery({
     queryKey: ["notes", searchQuery, tag, currentPage],
     queryFn: () => fetchNotes(searchQuery, tag, currentPage),
     placeholderData: keepPreviousData,
-    initialData: initData,
   });
 
   function modalClose() {
@@ -42,7 +44,7 @@ export default function NotesClient({
   return (
     <div className={css.app}>
       <header className={css.toolbar}>
-        <SearchBox handleChange={setInputValue} value={inputValue} />
+        <SearchBox handleChange={handleSearchChange} value={inputValue} />
 
         {data && data?.totalPages > 1 && (
           <Pagination
