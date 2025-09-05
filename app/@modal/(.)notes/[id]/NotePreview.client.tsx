@@ -1,20 +1,24 @@
 "use client";
-import ModalNote from "@/components/ModalNote/ModalNote"
+import ModalNote from "@/components/ModalNote/ModalNote";
 import { fetchNoteById } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 type Props = {
-    id: string;
+  id: string;
 };
 
 const NotePreview = ({ id }: Props) => {
-const router = useRouter();
-  
-  const { data: note , isLoading, isError} = useQuery({
+  const router = useRouter();
+
+  const {
+    data: note,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["note", id],
     queryFn: () => fetchNoteById(id),
-    refetchOnMount: false  
+    refetchOnMount: false,
   });
 
   const close = () => router.back();
@@ -40,7 +44,7 @@ const router = useRouter();
       <h2>{note.title}</h2>
       <p>{note.content}</p>
       <p>{note.tag}</p>
-      <p>{note.createdAt}</p>
+      <p>{new Date(note.createdAt).toLocaleString()}</p>
     </ModalNote>
   );
 };
